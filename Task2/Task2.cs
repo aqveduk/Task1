@@ -1,4 +1,20 @@
-﻿using System;
+﻿/*
+
+VLADIMIR RAEVSKIY GEEKBRAINS LESSON6
+TASK2
+
+2. Модифицировать программу нахождения минимума функции так, чтобы можно было передавать функцию в виде делегата.
+а) Сделайте меню с различными функциями и предоставьте пользователю выбор, для какой функции и на каком отрезке находить минимум.
+б) Используйте массив (или список) делегатов, в котором хранятся различные функции.
+в) *Переделайте функцию Load, чтобы она возвращала массив считанных значений. Пусть она
+возвращает минимум через параметр.
+
+
+
+*/
+
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 
@@ -129,7 +145,10 @@ namespace DoubleBinary
             fs.Close();
             return arr;
         }
-
+        /// <summary>
+        /// Print elements from List 
+        /// </summary>
+        /// <param name="arr"></param>
         public static void PrintArray(List<double> arr)
         {
             Console.Write("\n\nElements of array: [ ");

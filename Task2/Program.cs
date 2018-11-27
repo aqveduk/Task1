@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace DoubleBinary
@@ -17,6 +18,15 @@ namespace DoubleBinary
             return x * x - 50 * x + 10;
         }
         /// <summary>
+        /// make the power times 2
+        /// </summary>
+        /// <param name="x"></param>
+        /// <returns></returns>
+        public static double SecondPow(double x)
+        {
+            return x * x;
+        }
+        /// <summary>
         /// make the power times 3
         /// </summary>
         /// <param name="x"></param>
@@ -26,39 +36,60 @@ namespace DoubleBinary
             return x * x * x;
         }
 
-        public static void Menu()
+        public static void Menu(out double minL)
         {
+            minL = 0;
+            var delList = new List<Fun> { F, SecondPow, ThirdPow };
+            string min = "";
+            string max = "";
             bool flag = true;
-            Console.WriteLine("Welcome! Please select a function: \n1. X^2 - 50*x + 10\n2.x^3");
+            Console.WriteLine("Welcome! Please select a function: \n1. X^2 - 50*x + 10\n2.x^2\n3.x^3");
             while (flag)
             {
-                string answer = Console.ReadLine();
-
-
-                Console.WriteLine("Please enter the first value for range beginning: ");
-                string min = Console.ReadLine();
-
-                Console.WriteLine("Please enter the second value for range end: ");
-                string max = Console.ReadLine();
-
-
-                if (answer == "1")
+                try
                 {
+                    string answer = Console.ReadLine();
 
-                    Console.Write("Result: ");
-                    SaveFunc("data.bin", F, double.Parse(min), double.Parse(max), 1);
-                    Console.WriteLine(Load("data.bin"));
-                    flag = false;
-                }
-                else if (answer == "2")
+
+                if (int.Parse(answer) <= 3 && int.Parse(answer) > 0)
                 {
-                    Console.Write("Result: ");
-                    SaveFunc("data.bin", ThirdPow, double.Parse(min), double.Parse(max), 1);  //power times 3
-                    Console.WriteLine(Load("data.bin"));
-                    flag = false;
+                    Console.WriteLine("Please enter the first value to set the range:");
+                    min = Console.ReadLine();
+                    Console.WriteLine("Please enter the second value to set the range:");
+                    max = Console.ReadLine();
                 }
-                else
-                    Console.WriteLine("Wrong value! Try again!");
+
+                    switch (answer)
+                    {
+                        case "1":
+
+
+                            SaveFunc("data.bin", delList[0], double.Parse(min), double.Parse(max), 1);
+                            PrintArray(Load("data.bin", out minL));
+                            flag = false;
+                            break;
+
+                        case "2":
+
+                            SaveFunc("data.bin", delList[1], double.Parse(min), double.Parse(max), 1);  //power times 2
+                            PrintArray(Load("data.bin", out minL));
+                            flag = false;
+                            break;
+
+                        case "3":
+
+                            SaveFunc("data.bin", delList[2], double.Parse(min), double.Parse(max), 1);  //power times 3
+                            PrintArray(Load("data.bin", out minL));
+                            flag = false;
+                            break;
+
+                        default:
+                            Console.WriteLine("Wrong value! Try again!");
+                            break;
+
+                    }
+                }
+                catch { Console.WriteLine("You've entered unacceptable value!"); }
             }
         }
 
@@ -75,24 +106,47 @@ namespace DoubleBinary
             bw.Close();
             fs.Close();
         }
-        public static double Load(string fileName)
+
+        public static List<double> Load(string fileName, out double minL)
         {
             FileStream fs = new FileStream(fileName, FileMode.Open, FileAccess.Read);
             BinaryReader bw = new BinaryReader(fs);
-            double min = double.MaxValue;
+            
+            minL = double.MaxValue;
+            int count = 1;
+            List<double> arr = new List<double>();
+
             double d;
+
             for (int i = 0; i < fs.Length / sizeof(double); i++)
             {
                 d = bw.ReadDouble();
-                if (d < min) min = d;
+                arr.Add(d);
+                if (d < minL)  minL = d;
+                count++;
             }
             bw.Close();
             fs.Close();
-            return min;
+            return arr;
         }
+
+        public static void PrintArray(List<double> arr)
+        {
+            Console.Write("\n\nElements of array: [ ");
+            foreach (double elem in arr)
+            {
+                Console.Write( elem + "  ");
+            }
+            Console.Write("]");
+
+        }
+
         static void Main(string[] args)
         {
-            Menu();
+            double min;
+            Menu(out min);
+
+            Console.WriteLine("\nThe minimum of function is  : {0}", min);
 
             Console.ReadKey();
         }
